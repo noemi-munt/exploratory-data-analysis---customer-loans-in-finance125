@@ -1,34 +1,59 @@
-# Data Analysis of Customer Loans in Finance
+# Exploratory Data Analysis - Financial Loans
 
-The aim of the project is to conduct exploratory data analysis on the loan data, to draw insight of the risk and return associated with the business' loans.
-Ultimately improving the performance and profitability of the loan company's portfolio.
+## Table of Contents
+1. [Project Description](#project-description)
+2. [Installation Instructions](#installation-instructions)
+3. [Usage Instructions](#usage-instructions)
+4. [File Structure](#file-structure)
+5. [License](#license)
 
-## Description
+## Project Description
+This project conducts **Exploratory Data Analysis (EDA)** on a financial loans dataset. The primary goal is to gain insights into the portfolio of a loan company by cleaning, transforming, and analysing the data.
 
-The statistical methods used in this project will include...
+### Objectives:
+- Load and inspect the dataset
+- Handle missing values and data inconsistencies 
+- Convert data types appropriately (e.g., categorical encoding, datetime conversion)
+- Perform descriptive statistical analysis
+- Visualise key trends and relationships
 
-## Getting Started
+Through this project, I enhanced my understanding of **data preprocessing**, **data handling**, and **basic financial data analysis**.
 
-### Dependencies
+## Installation Instructions
+To run this project, ensure you have Python installed along with the required dependencies.
 
-Python
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/yourusername/your-repository.git
+   cd your-repository
+   ```
+2. Install the required Python libraries:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Run the Jupyter Notebook:
+   ```bash
+   jupyter notebook EDA.ipynb
+   ```
 
-Libraries :
-Pandas
-SQLAlchemy
-Yaml
+## Usage Instructions
+1. Open the Jupyter Notebook (`EDA.ipynb`).
+2. Run the cells sequentially to:
+   - Load the loan dataset
+   - Perform data type conversions and cleaning
+   - Explore statistical summaries
+   - Visualise trends using charts and graphs
+3. Modify and extend the analysis as needed.
 
-PostgreSQL, pgAdmin4
-
-### Installing
-
-Install Python.
-
-### Executing program
-
-Download `db_utils.py` to extract the loan data from the RDS Database. Please note the database credentials need to be stored within the same folder and named `credentials.yaml`.
-
+## File Structure
+```
+project-directory/
+│── EDA.ipynb            # Jupyter Notebook with data analysis
+│── loans_data_raw.csv    # Raw dataset (if applicable)
+│── requirements.txt      # List of dependencies
+│── README.md             # Project documentation
+└── loan_data_analysis.py # Helper functions for data processing
+```
 
 ## License
-
-This project is licensed under The Unlicense License - see the LICENSE.md file for details
+This project is licensed under the MIT License. See the LICENSE file for details.
