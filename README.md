@@ -31,28 +31,39 @@ To run this project, ensure you have Python installed along with the required de
    ```bash
    pip install -r requirements.txt
    ```
-3. Run the Jupyter Notebook:
+3. Run the EDA Jupyter Notebook:
    ```bash
    jupyter notebook EDA.ipynb
    ```
+4. Run the EDA Analysis Jupyter Notebook.
+   ```bash
+   jupyter notebook EDA_analysis.ipynb
+   ```
 
 ## Usage Instructions
-1. Open the Jupyter Notebook (`EDA.ipynb`).
+1. Open the EDA Jupyter Notebook (`EDA.ipynb`).
 2. Run the cells sequentially to:
    - Load the loan dataset
    - Perform data type conversions and cleaning
    - Explore statistical summaries
-   - Visualise trends using charts and graphs
-3. Modify and extend the analysis as needed.
+   - Handle skewed data, remove outliers and drop overly correlated columns
+3. Open the EDA Analysis Jupyter Notebook (`EDA_analysis.ipynb`).
+4. Run the cells sequentially to:
+   - Load the clean data
+   - Assess the current state of loans
+   - Calculate loss
+   - Investigate predictors of loss
 
 ## File Structure
 ```
 project-directory/
-│── EDA.ipynb            # Jupyter Notebook with data analysis
-│── loans_data_raw.csv    # Raw dataset (if applicable)
-│── requirements.txt      # List of dependencies
-│── README.md             # Project documentation
-└── loan_data_analysis.py # Helper functions for data processing
+│── EDA.ipynb                    # Jupyter Notebook with exploratory data analysis
+│── EDA_analysis.ipynb           # Jupyter Notebook with further data analysis
+│── loans_data_raw.csv           # Raw dataset
+│── loan_dataset_schema.ipynb    # Definitions of each column in dataset
+│── requirements.txt             # List of dependencies
+│── README.md                    # Project documentation
+└── loan_data_analysis.py        # Helper functions for data processing
 ```
 
 ## License
