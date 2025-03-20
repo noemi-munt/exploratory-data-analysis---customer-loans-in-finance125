@@ -64,12 +64,11 @@ class DataTransform:
         Convert specified columns to datetime type.
 
         Parameters:
-        column_names (list): List of column names to convert to datetime type.
+        date_columns (list): List of column names to convert to datetime type.
 
         Returns:
         pd.DataFrame: The DataFrame with specified columns converted to datetime type.
         """
-        #self.df[date_columns] = self.df[date_columns].apply(pd.to_datetime(self.df,format='%d.%m.%Y'))
         for col in date_columns:
             self.df[col] = pd.to_datetime(self.df[col], format='mixed')
         return self.df
@@ -128,20 +127,7 @@ class DataFrameInfo:
             }
     
         return stats
-
     
-
-
-    def calculate_categorical_mode(self):
-        """
-        Calculates the mode for each categorical column in a DataFrame.
-        """
-        # Select categorical columns
-        categorical_columns = self.df.select_dtypes(include=['category']).columns
-        mode_dict = {}
-        mode_values = self.df[col].mode()
-
-
     def print_shape(self):
         """Print out the shape of the DataFrame."""
         return self.df.shape
@@ -351,10 +337,49 @@ class Plotter:
         plt.title(f'Box Plot of {title}')
         plt.show()
     
-    def facetplot(self, cols:list, plot):
 
+    def facetgrid(self, cols:list, plot):
+        """
+        Create multi-grid plots of the data.
+
+        Parameters:
+        cols (list): The list of column to be plotted.
+        plot (str): The type of plot.     
+        """
         
-        sns.set_theme(font_scale=0.7)
         f = pd.melt(self.df, value_vars=cols)
         g = sns.FacetGrid(f, col="variable",  col_wrap=3, sharex=False, sharey=False)
-        g = g.map(plot, "value")
+        if plot == "box":
+            g = g.map(sns.boxplot, "value")
+        else:
+            g = g.map(sns.histplot, "value", kde=True)
+
+    def heatmap(self, data, title):
+        """
+        Plot a heat map of the data.
+
+        Parameters:
+        data (pd.DataFrame): The DataFrame to be mapped.
+        Title (str): Title of the plot.     
+        """
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(data, annot=True, cmap='coolwarm', fmt='.2f')
+        plt.title(title)
+        plt.show()
+
+    def countplot(self, plot_data, x_col, y_col, data_order, title, xlabel, ylabel):
+        """
+        Plot bar charts of categorical data according to Loan Status.
+
+        Parameters:
+        data (pd.DataFrame): The DataFrame to be mapped.
+        Title (str): Title of the plot.     
+        """
+        
+        sns.countplot(data=plot_data, x=x_col, y=y_col, hue='loan_status', hue_order=["Fully Paid","Late","Charged Off"], palette='coolwarm',order=data_order)
+        plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        plt.legend(title="Risk Status")
+        plt.show()
+    
