@@ -8,7 +8,7 @@
 5. [License](#license)
 
 ## Project Description
-This project conducts **Exploratory Data Analysis (EDA)** on a financial loans dataset. The primary goal is to gain insights into the portfolio of a loan company by cleaning, transforming, and analysing the data.
+This project conducts **Exploratory Data Analysis (EDA)** on a financial loans dataset with over 50,000 records and tracking 43 variables. The primary goal is to gain insights into the portfolio of a loan company by cleaning, transforming, and analysing the data. With the results the company will be able to make data driven decisions on how to manage the portfolio.
 
 ### Objectives:
 - Load and inspect the dataset
