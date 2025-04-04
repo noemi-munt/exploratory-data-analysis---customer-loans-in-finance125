@@ -5,7 +5,6 @@ import pandas as pd
 from pandas.api.types import CategoricalDtype
 import seaborn as sns
 
-
 class DataTransform:
     """
     A class to perform various data transformation operations on a DataFrame.
@@ -193,7 +192,7 @@ class DataFrameTransform:
         col_name (str): The column name for which NULL values are to be imputed.
         """
         return self.df[col_name].fillna(self.df[col_name].median())
-
+    
     def skew_transform(self, subset_columns: list):
         """
         Perform transformations on columns to determine which transformation results in the biggest reduction in skew.
@@ -214,8 +213,8 @@ class DataFrameTransform:
             return 1 / (series + 1e-9)
 
         transformation_results = {}
-        
-        # Calculate different skew transformations for each column
+        best_transformations_dict = {}  
+
         for col in subset_columns:
             original_skew = self.df[col].skew()
             log_skew = log_transform(self.df[col]).skew()
@@ -223,32 +222,72 @@ class DataFrameTransform:
             reciprocal_skew = reciprocal_transform(self.df[col]).skew()
 
             transformation_results[col] = {
-                'original': original_skew,
-                'log': log_skew,
-                'sqrt': sqrt_skew,
-                'reciprocal': reciprocal_skew,
+                'Original': original_skew,
+                'Log': log_skew,
+                'Square Root': sqrt_skew,
+                'Reciprocal': reciprocal_skew,
             }
 
-        skew_df = pd.DataFrame(transformation_results).T # Transpose df
-        skew_df['best_transformation'] = skew_df.drop(columns=['original']).abs().idxmin(axis=1) # Find column with the minimum value in each row
+            # Find the best transformation (minimum absolute skew)
+            best_transformation = min(
+                ['Log', 'Square Root', 'Reciprocal'], 
+                key=lambda t: abs(transformation_results[col][t])
+            )
 
-        # Print the best skew tranformation for each column
+            best_transformations_dict[col] = best_transformation  
+
+
+        skew_df = pd.DataFrame(transformation_results).T # Transpose df
         print(skew_df)
 
         transformed_df = self.df.copy()
-
-        # Perform best skew transformation on each column of the df
-        for col in subset_columns:
-            best_transformation = skew_df.loc[col, 'best_transformation']
-
-            if best_transformation == 'log':
+        
+        for col, best_transformation in best_transformations_dict.items():
+            if best_transformation == 'Log':
                 transformed_df[col] = log_transform(self.df[col])
-            elif best_transformation == 'sqrt':
+            elif best_transformation == 'Square Root':
                 transformed_df[col] = sqrt_transform(self.df[col])
-            elif best_transformation == 'reciprocal':
+            elif best_transformation == 'Reciprocal':
                 transformed_df[col] = reciprocal_transform(self.df[col])
 
-        return transformed_df
+        return transformed_df, best_transformations_dict
+
+    def plot_skew_transformations(self, subset_columns: list, best_transformations_dict: dict):
+        """
+        Plots histograms for each column in the subset, showing original and transformed distributions,
+        highlighting the best transformation in a different color.
+        
+        Parameters:
+        subset_columns (list): List of column names to be visualized.
+        skew_df (pd.DataFrame): DataFrame containing skew information and best transformation.
+        """
+        num_columns = len(subset_columns)
+        fig, axes = plt.subplots(num_columns, 4, figsize=(16, 4 * num_columns))
+
+
+        transformations = {
+            "Original": lambda x: x,
+            "Square Root": np.sqrt,
+            "Log": np.log1p,
+            "Reciprocal": lambda x: 1 / (x + 1e-9)
+        }
+
+        default_color = "blue"
+        highlight_color = "tomato"
+
+        for i, col in enumerate(subset_columns):
+            best_transformation = best_transformations_dict[col]
+            for j, (title, transform) in enumerate(transformations.items()):
+                ax = axes[i, j]
+                transformed_data = transform(self.df[col])  # apply transformation to column
+                
+                color = highlight_color if title == best_transformation else default_color
+                
+                sns.histplot(transformed_data, ax=ax, kde=True, bins=30, color=color)
+                ax.set_title(f"{col} - {title}")
+
+        plt.tight_layout()
+        plt.show()
     
     def remove_outliers_iqr(self, column):
         """
@@ -285,7 +324,7 @@ class DataFrameTransform:
         Q1 = nonzero_data.quantile(0.25)
         Q3 = nonzero_data.quantile(0.75)
         IQR = Q3 - Q1
-        lower_threshold = Q1 - 3 * IQR  # Using 3 * IQR instead of 1.5 * IQR
+        lower_threshold = Q1 - 3 * IQR 
         upper_threshold = Q3 + 3 * IQR
 
         # Keep all zero values, and apply threshold filtering only to nonzero values
@@ -308,22 +347,6 @@ class Plotter:
         df (pd.DataFrame): The DataFrame to be plotted.
         """
         self.df = df
-
-    def histogram(self, x_val, x_label: str, title: str):
-        """
-        Plot a histogram of the data.
-
-        Parameters:
-        xlabel (str): The label for the x-axis.
-        title (str): The title of the plot.
-        """
-        sns.histplot(x_val, bins=10, kde=True)
-        plt.xticks(rotation=45, ha='right', fontsize=10)
-        plt.xlabel(x_label)
-        plt.ylabel("Frequency")
-        plt.tight_layout()
-        plt.title(title)
-        plt.show()
     
     def boxplot(self, x_label: str, title: str):
         """
@@ -362,8 +385,24 @@ class Plotter:
         data (pd.DataFrame): The DataFrame to be mapped.
         Title (str): Title of the plot.     
         """
-        plt.figure(figsize=(10, 8))
+        plt.figure(figsize=(15, 8))
         sns.heatmap(data, annot=True, cmap='coolwarm', fmt='.2f')
+        plt.title(title)
+        plt.show()
+    
+    def histogram(self, x_val, x_label: str, title: str):
+        """
+        Plot a histogram of the data.
+
+        Parameters:
+        xlabel (str): The label for the x-axis.
+        title (str): The title of the plot.
+        """
+        sns.histplot(x_val, bins=10, kde=True)
+        plt.xticks(rotation=45, ha='right', fontsize=10)
+        plt.xlabel(x_label)
+        plt.ylabel("Frequency")
+        plt.tight_layout()
         plt.title(title)
         plt.show()
 
